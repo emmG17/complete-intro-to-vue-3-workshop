@@ -1,46 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Avatar: The Last Airbender</title>
-  </head>
-  <body>
-    <div id="app">
-      <p v-if="characterList.length === 0">There are no characters</p>
-      <ul v-else-if="characterList.length % 2 === 0">
-        <li v-for="character in characterList">{{ character.name }}</li>
-      </ul>
-      <p>
-        <span v-for="(character, index) in characterList"
-          >{{ character.name }}{{ index === characterList.length - 1 ? '' : ', '
-          }}
-        </span>
-      </p>
-      <p v-else>There are odd characters!</p>
-    </div>
-
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script>
-      Vue.createApp({
-        data: () => ({
-          characterList: [
-            {
-              name: 'Aang'
-            },
-            {
-              name: 'Zuko'
-            },
-            {
-              name: 'Toph'
-            },
-            {
-              name: 'Katara'
-            }
-          ]
-        })
-      }).mount('#app')
-    </script>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>The Office</title>
+    </head>
+    <body>
+        <main role="main" id="app">
+            <h1>{{title}}</h1>
+            <h2>Seasons: {{nSeasons}}</h2>
+            <h2>Cast</h2>
+            <ul v-if="cast.length != 0">
+                <li v-for="actor in cast">
+                    <h3>{{ actor.name }}</h3>
+                    <p>{{ actor.character }}</p>
+                    <input type="checkbox" v-model="actor.favorite">
+                </li>
+            </ul>
+            <h3 v-else>No cast information available</h3>
+            <h2>Favorite Characters</h2>
+            <ul v-if="favorites.length > 0">
+                <li v-for="actor in favorites">
+                    <p> {{ actor.character }} </p>
+                </li>
+            </ul>
+            <p v-else>No favorite characters so far</p>
+            <hr>
+            <form id="new-character-form" @submit.prevent="addCharacter">
+                <h2> New Character </h3>
+                <label for="actor-name">Actor name: </label>
+                <input type="text" id="actor-name" name="actor-name" required>
+                <label for="character-name">Character name: </label>
+                <input type="text" id="character-name" name="character-name" required>
+                <label for="is-favorite">Favorite: </label>
+                <input type="checkbox" name="is-favorite" id="is-favorite">
+                <button type="submit">Save</button>
+            </form>
+        </main>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script>
+            let theOffice = {
+                title: "The Office",
+                nSeasons: 9,
+                cast: [
+                    { name: "Steve Carrell", character: "Michael Scott", favorite: false},
+                    { name: "Jenna Fischer", character: "Pam Beesly", favorite: false },
+                    { name: "John Krasinski", character: "Jim Halpert", favorite: false },
+                    { name: "Rainn Wilson", character: "Dwight Schrute", favorite: false },
+                ],
+            };
+            let { createApp } = Vue;
+            let app = createApp({
+                data() {
+                    return theOffice;
+                },
+                computed: {
+                    favorites: function(){
+                        return this.cast.filter((actor) => actor.favorite)
+                    }
+                },
+                methods: {
+                    addCharacter(e){
+                        let data = new FormData(e.target)
+                        let newCharacter = {
+                            name: data.get("actor-name"),
+                            character: data.get("character-name"),
+                            favorite: data.get("is-favorite") ?? false
+                        }
+                        this.cast.push(newCharacter)
+                        e.target.reset();
+                    }
+                }
+            });
+            app.mount("#app");
+        </script>
+    </body>
 </html>
